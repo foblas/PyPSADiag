@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
 #        os: [windows-latest, macos-latest, ubuntu-latest]
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
         python-version: ['3.13']
     runs-on: ${{ matrix.os }}
 
@@ -33,8 +33,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Build executable
-        run: pyinstaller main.spec
+      - name: Build executables with PyInstaller
+        run: |
+          pyinstaller main.spec
+          ls dist/
 
       - name: Archive the release package (Windows)
         if: ${{ matrix.os == 'windows-latest' }}
@@ -49,7 +51,7 @@ jobs:
           mv dist/PyPSADiag/PyPSADiag dist/PyPSADiag/PyPSADiag-macos
           chmod +x dist/PyPSADiag/PyPSADiag-macos || true
           cd dist
-          tar -a -c -f ../PyPSADiag-macOS.zip PyPSADiag
+          zip -r ../PyPSADiag-macOS.zip PyPSADiag
 
       - name: Archive the release package (Linux)
         if: ${{ matrix.os == 'ubuntu-latest' }}
